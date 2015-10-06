@@ -26,16 +26,16 @@ task :clean do |t|
 end
 
 task :build do |t|
-  sdk = "10.8"
+  sdk = "10.10"
   sh "xcodebuild -project #{APP_SHORT_NAME}.xcodeproj -target #{APP_SHORT_NAME} -configuration Release -sdk macosx#{sdk} build"
 end
 
-task :install => [:clean, :build] do |t|
-  sh "killall #{APP_SHORT_NAME}" rescue nil
-  sh "rm -rf /Applications/#{APP_NAME}"
-  sh "sudo mv #{BUILT_APP_PATH} /Applications/"
-  sh "open /Applications/#{APP_NAME}"
-end
+# task :install => [:clean, :build] do |t|
+#   sh "killall #{APP_SHORT_NAME}" rescue nil
+#   sh "rm -rf /Applications/#{APP_NAME}"
+#   sh "sudo mv #{BUILT_APP_PATH} /Applications/"
+#   sh "open /Applications/#{APP_NAME}"
+# end
 
 task :package => [:package_app] do |t|
 end
@@ -62,73 +62,73 @@ task :package_app do |t|
   TMP_PATH.rmtree
 end
 
-task :appcast do |t|
-  package_fname = "#{APP_SHORT_NAME}_#{app_version}.tbz"
-  package_path = PACKAGES_PATH + package_fname
-  stat = File.stat(package_path)
+# task :appcast do |t|
+#   package_fname = "#{APP_SHORT_NAME}_#{app_version}.tbz"
+#   package_path = PACKAGES_PATH + package_fname
+#   stat = File.stat(package_path)
   
-  version = app_version
-  fsize = stat.size
-  ftime = stat.mtime.rfc2822
-  updates = parse_commit_log
-  dsa_signature = `ruby Frameworks/Sparkle/SigningTools/sign_update.rb #{package_path} etc/dsa_priv.pem`.chomp
+#   version = app_version
+#   fsize = stat.size
+#   ftime = stat.mtime.rfc2822
+#   updates = parse_commit_log
+#   dsa_signature = `ruby Frameworks/Sparkle/SigningTools/sign_update.rb #{package_path} etc/dsa_priv.pem`.chomp
   
-  APPCAST_PATH.rmtree
-  e = ERB.new(File.open(APPCAST_TEMPLATE_PATH).read, nil, '-')
-  s = e.result(binding)
-  File.open(APPCAST_PATH, 'w') do |f|
-    f.write(s)
-  end
+#   APPCAST_PATH.rmtree
+#   e = ERB.new(File.open(APPCAST_TEMPLATE_PATH).read, nil, '-')
+#   s = e.result(binding)
+#   File.open(APPCAST_PATH, 'w') do |f|
+#     f.write(s)
+#   end
   
-  sh "mate #{WEB_PATH}"
-end
+#   sh "mate #{WEB_PATH}"
+# end
 
-task :web do |t|
-  rss_templates = ['rss.rxml']
-  html_templates = []
+# task :web do |t|
+#   rss_templates = ['rss.rxml']
+#   html_templates = []
   
-  change_log = ''
-  version = ''
-  pubdate = ''
+#   change_log = ''
+#   version = ''
+#   pubdate = ''
   
-  s = File.open(APPCAST_PATH).read
-  if m = %r!<ul>.+?</ul>!m.match(s)
-    change_log = m[0]
-  end
-  if m = %r!sparkle:version="([^"]+)"!m.match(s)
-    version = m[1]
-  end
-  if m = %r!<pubDate>([^<>]+)</pubDate>!m.match(s)
-    pubdate = m[1]
-  end
+#   s = File.open(APPCAST_PATH).read
+#   if m = %r!<ul>.+?</ul>!m.match(s)
+#     change_log = m[0]
+#   end
+#   if m = %r!sparkle:version="([^"]+)"!m.match(s)
+#     version = m[1]
+#   end
+#   if m = %r!<pubDate>([^<>]+)</pubDate>!m.match(s)
+#     pubdate = m[1]
+#   end
   
-  time = Time.rfc2822(pubdate)
-  date = time.strftime("%Y.%m.%d")
+#   time = Time.rfc2822(pubdate)
+#   date = time.strftime("%Y.%m.%d")
   
-  rss_templates.each do |fname|
-    template_path = TEMPLATES_PATH + fname
-    out_path = WEB_PATH + fname.gsub('.rxml', '.xml')
+#   rss_templates.each do |fname|
+#     template_path = TEMPLATES_PATH + fname
+#     out_path = WEB_PATH + fname.gsub('.rxml', '.xml')
     
-    out_path.rmtree
-    e = ERB.new(File.open(template_path).read, nil, '-')
-    s = e.result(binding)
-    File.open(out_path, 'w') do |f|
-      f.write(s)
-    end
-  end
+#     out_path.rmtree
+#     e = ERB.new(File.open(template_path).read, nil, '-')
+#     s = e.result(binding)
+#     File.open(out_path, 'w') do |f|
+#       f.write(s)
+#     end
+#   end
   
-  html_templates.each do |fname|
-    template_path = TEMPLATES_PATH + fname
-    out_path = WEB_PATH + fname.gsub('.rhtml', '.html')
+#   html_templates.each do |fname|
+#     template_path = TEMPLATES_PATH + fname
+#     out_path = WEB_PATH + fname.gsub('.rhtml', '.html')
     
-    out_path.rmtree
-    e = ERB.new(File.open(template_path).read, nil, '-')
-    s = e.result(binding)
-    File.open(out_path, 'w') do |f|
-      f.write(s)
-    end
-  end
-end
+#     out_path.rmtree
+#     e = ERB.new(File.open(template_path).read, nil, '-')
+#     s = e.result(binding)
+#     File.open(out_path, 'w') do |f|
+#       f.write(s)
+#     end
+#   end
+# end
 
 
 class CommitLog

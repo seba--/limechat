@@ -2592,11 +2592,11 @@
 
     if ([Preferences dccAction] != DCC_IGNORE) {
         if (port > 0 && size > 0) {
-            NSString* path = [@"~/Downloads" stringByExpandingTildeInPath];
+            NSString* path = [@"~/Movies/inbox" stringByExpandingTildeInPath];
             NSFileManager* fm = [NSFileManager defaultManager];
             BOOL isDir = NO;
             if ([fm fileExistsAtPath:path isDirectory:&isDir]) {
-                path = @"~/Downloads";
+                path = @"~/Movies/inbox";
             }
             else {
                 path = @"~/Desktop";
