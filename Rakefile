@@ -7,7 +7,7 @@ require 'pp'
 APP_SHORT_NAME = 'LimeChat'
 APP_NAME = APP_SHORT_NAME + '.app'
 ROOT_PATH = Pathname.new(__FILE__).dirname
-RELEASE_BUILD_PATH = ROOT_PATH + APP_NAME
+RELEASE_BUILD_PATH = ROOT_PATH + 'build/Release/' + APP_NAME
 README_PATH = ROOT_PATH + 'README.md'
 GPL_PATH = ROOT_PATH + 'GPL.txt'
 PACKAGES_PATH = ROOT_PATH + 'Packages'
@@ -26,7 +26,7 @@ task :clean do |t|
 end
 
 task :build do |t|
-  sdk = "10.10"
+  sdk = "10.12"
   sh "xcodebuild -project #{APP_SHORT_NAME}.xcodeproj -target #{APP_SHORT_NAME} -configuration Release -sdk macosx#{sdk} build"
 end
 
